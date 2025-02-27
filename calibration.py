@@ -18,6 +18,8 @@ def process_data(file_pattern, PMT_num, prom, width):
         if PMT_num == 2:
             if sources[i] in ('Cs', 'Am'):
                 peaks = peaks[1:]
+            if sources[i] == 'Ba':
+                peaks = peaks[1:-1]
         
         half_max = []; x_left_interp = []; x_right_interp = []; fwhm = []
         for j in range(len(peaks)):
@@ -64,6 +66,8 @@ def calibration (file_pattern, coarse_gain, PMT_num, prom, width):
     peaks, fwhm = process_data(file_pattern, PMT_num, prom, width)
 
     #error in E is slope*fwhm
+    if PMT_num == 2:
+        exp_peaks[0] = exp_peaks[0][1:-1]
 
     v_peaks = []; E_peaks = []; FWHM = []
     #scale data by gain
@@ -72,6 +76,7 @@ def calibration (file_pattern, coarse_gain, PMT_num, prom, width):
             v_peaks.append(peaks[i][j]*10/coarse_gain[i])
             E_peaks.append(exp_peaks[i][j])
             FWHM.append(fwhm[i][j])
+    
 
     v_peaks = np.array(v_peaks); E_peaks = np.array(E_peaks); FWHM = np.array(FWHM)
 
